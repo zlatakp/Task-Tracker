@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block title %} Login {% endblock %}
+{% block body %}
+    {% include "navigation_out.html" %}
+{% endblock %}
+{% block main %}
+
+<form action="/login" method="POST">
+    <div class="form-group">
+        <input type="TEXT" autocomplete='off' class="form-control" name="username" placeholder="Username" required>
+
+    </div>
+    <div class="form-group">
+        <input type="password" autocomplete='off' class="form-control" name="password" placeholder="Password" required>
+    </div>
+    <div>
+        <a href="/forgot">Forgot Password?</a>
+    </div>
+    <br>
+
+    <div class="form-group">
+        <button class="btn btn-primary" type='submit'>Log In</button>
+    </div>
+
+
+</form>
+<div>
+    <a href="/register" ><button class="btn" type="button">Create New Account</button></a>
+</div>
+
+{% endblock %}
+

@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block title %}
+    Forgot Password
+{% endblock %}
+{% block script %}
+{% endblock %}
+{% block body %}
+<!-- display navigation bar contents based on the log in status of the user -->
+    {% if login_status == 'in' %}
+        {% include "navigation.html" %}
+    {% else %}
+        {% include "navigation_out.html" %}
+    {% endif %}
+{% endblock %}
+
+{% block main %}
+<!-- submit a password reset request via form -->
+    <form action="/forgot" method="post" form = "form">
+        <div class="form-group">
+            <input type="TEXT" class="form-control" id = "email" placeholder="example@example.com" autocomplete = "off" name = "email" required>
+        </div>
+        <button class="btn btn-primary" type="submit" id ="submit">Reset Password</button>
+    </form>
+
+{% endblock %}

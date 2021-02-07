@@ -1,0 +1,123 @@
+{% extends "layout.html" %}
+{% block script %}
+
+<script>
+var counter = 2;
+//implement the script once the page loads
+    $(document).ready(function(){
+        var arr;
+        /*monitor user's actions, form submission and adding task are disabled until previous task field is filled and an employee is chosen,
+        removing a task field is only possible when >1 task fields are present*/
+        $('form, #add_task').on('keyup click keydown', function(){
+            $('#submit_button, #add_task').attr('disabled', false)
+            $('#remove_task').attr('disabled', true)
+            if (counter >= 3) {
+               $('#remove_task').attr('disabled', false)
+            }
+            arr = $('#employee, input.tasks').map(function(){
+                return $(this).val()
+                })
+                .get()
+            for (var i = 0; i < arr.length; i++) {
+                if (arr[i] === '') {
+                    $('#submit_button, #add_task').attr('disabled', true)
+                }
+            }
+        }),
+        //use bootstrap validation to highlight correctly and incorrectly filled out form fields
+        $('#assign_form, #add_task').on('click', function(){
+            //validate the inputs
+            $('#assign_form').addClass('was-validated')
+        }),
+        $('#remove_task').on('click', function(event){
+            $('input.tasks:last').remove()
+            counter = counter - 1
+        }),
+        //create a new task field when Add Task button is clicked
+        $('#add_task').on('click', function(){
+            for (var i = 1; i < counter; i++) {
+                var task_i = (["task", counter-1]).join("_").toString()
+                if ($('#'+task_i).val() === '') {
+                    return false;
+                }
+            }
+            var placeholder = (["Task", counter]).join(" ")
+            var nameId = (["task", counter]).join("_")
+            counter += 1;
+            var input = $("<input>").attr({
+                "type": "TEXT", "placeholder": placeholder, "required": true,
+                "name": nameId, "id": nameId
+            }).addClass("form-control tasks")
+            var div = $("<div></div>").html(input).addClass("form-group")
+            $("#inputs").append(div)
+        });
+        //when choosing the employee from select field, display a badge indicating total number of tasks assigned to that employee
+       $("#employee").on('change', function(){
+            var employee_name = $(this).children('option:selected').val()
+            var total_tasks;
+            var idval;
+            var employees = JSON.parse('{{employees|tojson}}')
+            var i;
+            for (i = 0; i < employees.length; i++) {
+                if (employees[i]['name'] == employee_name) {
+                    total_tasks = employees[i]['total_tasks']
+                    idval = employees[i]['id']
+                    break
+                }
+            }
+            $('#status').text(total_tasks)
+            $('#employee_id').val(idval)
+            $('#hidden').show()
+          })
+    })
+</script>
+{% endblock %}
+{% block title %}
+    Assign Tasks
+{% endblock %}
+{% block body %}
+    {% include "navigation.html" %}
+{% endblock %}
+{% block main %}
+
+    <h2> Assign tasks here</h2>
+    <div id = 'outer'>
+        <!-- if the badge with employee's total number of tasks assigned is clicked, redirect the user to list of tasks assigned to the employeee-->
+        <div id = 'hidden'>
+            <form id = 'view_form' action="/progress" method = "POST">
+                <input type = 'hidden' name = 'user_id' id = 'employee_id'>
+                <button type = 'submit' class = "btn btn-primary btn-sm" form = 'view_form'><span class = 'badge badge-pill badge-light' id = 'status'></span></button>
+            </form>
+        </div>
+
+        <!-- add tasks to assign to the employee-->
+        <form id = 'assign_form' action = "/assign" method = "POST" class='needs-validation forms' id = "form" novalidate>
+            <div id='inputs'>
+            <div class="form-group">
+                <select id="employee" name="employee" class="form-control custom-select selected_employee" required>
+                        <option value="">Choose an Employee</option>
+                    {% for employee in employees %}
+                        <option value='{{employee["name"]}}'>{{employee['name']}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group tasks" >
+                <input type="TEXT" class="form-control tasks" placeholder="Task 1" name='task_1' id ='task_1'required>
+            </div>
+            </div>
+            <div class="form-group">
+                <button type='button' id = 'remove_task' class="btn btn-danger">Remove task</button>
+            </div>
+
+             <div class="form-group">
+                <button type='button' id = 'add_task' class="btn">Add task</button>
+            </div>
+
+            <div class="form-group">
+                <button type='submit' form='assign_form' id = 'submit_button' class="btn btn-primary">Assign</button>
+            </div>
+
+        </form>
+    </div>
+{% endblock %}

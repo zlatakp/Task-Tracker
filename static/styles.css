@@ -1,0 +1,19 @@
+main .form-control {
+    width: auto;
+    display: inline-block;
+}
+
+main {
+    text-align: center;
+}
+
+#hidden {
+    display: none;
+    position: relative;
+    left: 125px;
+    top: 35px;
+
+}
+#outer {
+    position: relative;
+}

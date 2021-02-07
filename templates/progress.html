@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block script %}
+{% endblock %}
+{% block title %} Progress {% endblock %}
+{% block body %}
+    {% include "navigation.html" %}
+{% endblock %}
+{% block main %}
+
+<h2>{{[first_name, 's progress']|join("'")}}</h2>
+<br>
+
+<div class="progress" style="height: 50px;">
+    {% if progress == 100 %}
+        <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" style='width: {{progress}}%' role="progressbar" aria-valuenow='{{progress}}' aria-valuemin=0 aria-valuemax=100> <h4>{{progress}} % </h4> </div>
+    {% else %}
+        <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" style='width: {{progress}}%' role="progressbar" aria-valuenow='{{progress}}' aria-valuemin=0 aria-valuemax=100> <h4>{{progress}} % </h4></div>
+    {% endif %}
+</div>
+<br>
+
+
+
+<div>
+    <ul class = "list-group">
+    <p> Percent Complete (%) </p>
+    {% for task in tasks %}
+    <!-- list the employee's progress on a task if it is assigned -->
+    {% if task != "" %}
+        <div>
+        <li class = "list-group active">
+            {% set name = "task_" + loop.index|string %}
+            <h4><label for = '{{task}}' class="form-label">{{ task }}</label></h4>
+            <div class = "progress" style="height: 5px">
+                <div class="progress-bar" role = "progressbar" aria-valuenow='{{tasks_progress[loop.index - 1]}}' style="width: {{tasks_progress[loop.index - 1]}}%" id = '{{name}}' aria-valuemin="0" aria-valuemax = 100></div>
+            </div>
+         </li>
+        </div>
+        <br>
+    {% endif %}
+    {% endfor %}
+    </ul>
+
+</div>
+{% endblock %}

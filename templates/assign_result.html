@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block script %}
+{% endblock %}
+{% block title %} Tasks Assigned {% endblock %}
+{% block body %}
+    {% include "navigation.html" %}
+{% endblock %}
+{% block main %}
+
+<div>
+    <!-- display image according to the result of the assignment -->
+    <img src = "../static/{{status}}.jpg" alt = "Cannot display" style = "width: 50px; height: 50px">
+</div>
+
+<div>
+    <h4>{{text}}</h4>
+</div>
+<!-- list any unassigned tasks -->
+<div class = "container">
+    <div class = "row justify-content-md-center">
+        <ul class="list-group">
+            {% for task in unassigned %}
+            <li class="list-group-item list-group-item-danger">{{task}}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<br>
+
+<!-- list assigned tasks -->
+<div>
+    <h4>{{text_assigned}}</h4>
+</div>
+
+<div class = "container">
+    <div class = "row justify-content-md-center">
+        <ul class="list-group">
+            {% for task in assigned %}
+            <li class="list-group-item list-group-item-success">{{task}}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

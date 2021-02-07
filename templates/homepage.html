@@ -1,0 +1,97 @@
+{% extends "layout.html" %}
+{% block title %} Homepage {% endblock %}
+{% block script %}
+{% endblock %}
+{% block body %}
+    {% include "navigation.html" %}
+{% endblock %}
+
+<!-- Display either individual employee progress on the homepage or summary of all employees if the system is accessed by a supervisor -->
+{% block main %}
+
+<h1>Current Progress</h1>
+
+
+<!-- for a staff member -->
+{% if access == 'staff' %}
+<!-- if completed all tasks, the color of the progress bar is green otherwise orange -->
+<div class="progress" style="height: 50px;">
+    {% if progress == 100 %}
+        <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" style='width: {{progress}}%' role="progressbar" aria-valuenow='{{progress}}' aria-valuemin=0 aria-valuemax=100> <h4>{{progress}} %</h4> </div>
+    {% else %}
+        <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" style='width: {{progress}}%' role="progressbar" aria-valuenow='{{progress}}' aria-valuemin=0 aria-valuemax=100> <h4>{{progress}} %</h4></div>
+    {% endif %}
+</div>
+<br>
+<div>
+    <ul class = "list-group">
+    <p> Percent Complete (%) </p>
+    <form action = "/" method = "POST">
+
+        <!--list all tasks of the employee with progress and ability to update via form-->
+        {% for task in tasks %}
+        <div>
+            <li class = "list-group active">
+                {% set name = "task_" + loop.index|string %}
+                <h4><label for = '{{task}}' class="form-label">{{ task }}</label></h4>
+                <input type ="range" min = "0" max = "100" step = "10" value = '{{tasks_progress[loop.index - 1]}}' class = "form-range" name = '{{name}}' id = '{{name}}' list = "steplist">
+                <!-- create ticks on the progress bar every 10 units -->
+                <datalist id = "steplist">
+                    {% for i in range(0, 110, 10) %}
+                    <option>{{i}}</option>
+                    {% endfor %}
+                </datalist>
+            </li>
+        </div>
+        <br>
+        {% endfor %}
+        <div>
+            <button class = "btn btn-success" type = "submit">Update</button>
+        </div>
+
+    </form>
+    </ul>
+</div>
+
+
+<!-- for a supervisor -->
+{% else %}
+    <!-- button redirecting to page where tasks can be assigned to staff -->
+    <div>
+        <a href="/assign"><button class="btn btn-primary">Assign Tasks</button></a>
+    </div>
+
+    <div class = "container">
+        <div class = "row">
+            <!-- loop over each employee's information in the parsed 'info' variable -->
+            {% for employee in info %}
+                {% set id = 'id' %}
+                {% set form_id = [employee[id], 'form']|join('_') %}
+                {% set employee_progress = employee['progress'] %}
+                {% set idval = idval %}
+
+                <!-- for each staff, display their overall progress bar and a clickable name link redirecting to the detailed progress on each task of the employee -->
+                <div class = "col">
+                    <form action = "/progress" method = "POST" id = '{{form_id}}'>
+                        <input value='{{employee["id"]}}' name = "user_id" type = "hidden" >
+                    </form>
+                    <a href="" onclick = "document.getElementById('{{form_id}}').submit(); return false;"><label for ="{{idval}}" class="form-label">{{employee['first_name']+" "+employee['last_name']}}</label></a>
+
+                    <div id = "{{idval}}" class="progress" style="height: 20px;">
+                    <!-- if completed all tasks, the color of the progress bar is green otherwise orange -->
+                    {% if employee_progress == 100 %}
+                        <div id = "{{idval}}" class="progress-bar progress-bar-striped progress-bar-animated bg-success" style='width: {{employee_progress}}%' role="progressbar" aria-valuenow='{{employee_progress}}' aria-valuemin=0 aria-valuemax=100> {{employee_progress}} % </div>
+                    {% else %}
+                        <div id = "{{idval}}" class="progress-bar progress-bar-striped progress-bar-animated bg-warning" style='width: {{employee_progress}}%' role="progressbar" aria-valuenow='{{employee_progress}}' aria-valuemin=0 aria-valuemax=100> {{employee_progress}} % </div>
+                    {% endif %}
+                    </div>
+                </div>
+
+                <!-- line break in every two employees to create a two-column view -->
+                {% if (loop.index + 1) % 2 != 0  %}
+                <div class="w-100"></div>
+                {% endif %}
+
+            {% endfor %}
+{% endif %}
+{% endblock %}
