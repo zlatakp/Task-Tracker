@@ -223,7 +223,7 @@ def assign():
         last_name=request.form.get('employee').split()[1]
 
         #extract employee's id
-        idval = db.execute("SELECT * FROM employee_info WHERE first_name=:first_name AND last_name = :last_name", first_name = first_name, last_name = last_name)[0]['id']
+        idval = db.execute("SELECT * FROM employee_info WHERE first_name=:first_name AND last_name = :last_name AND NOT access = 'supervisor'", first_name = first_name, last_name = last_name)[0]['id']
 
         #extract task list from 'tasks' table for the employee
         taskList = db.execute("SELECT * FROM tasks WHERE id = :idval", idval = idval)[0]
