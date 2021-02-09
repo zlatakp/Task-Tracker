@@ -12,22 +12,6 @@ from helpers import login_required
 login_email=""
 login_password =""
 
-#user_id is for the person in session
-#id_val is the subject of a function
-
-
-#can't change person
-#update progress table
-#initial table values ie none, null etc
-#Configure application
-#close text fields
-#disable range if no task
-#tasks completed, incomplete, total and progrss
-#uniform - variable names ie id vs idval vs userid, camel case vs underscore
-#duplicate tasks
-#table var types - string with % for progress
-#range only show how many tasks
-#user_id related to session
 
 app= Flask(__name__)
 
